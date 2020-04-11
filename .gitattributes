@@ -1,2 +1,2 @@
 sequences.fa.gz filter=lfs diff=lfs merge=lfs -text
-matrix2D.*.npz filter=lfs diff=lfs merge=lfs -text
+matrix2d.*.npz filter=lfs diff=lfs merge=lfs -text
