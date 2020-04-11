@@ -222,10 +222,10 @@ def build_matrix(dhs_file, encode_dir, fasta_file, remap_dir, unibind_dir,
     out_dir=".", threads=1):
     """
     e.g. ./matrix.py --dhs-file ../../DHS/UCSC/DHS.200bp.bed \
-                       --encode-dir ../../ENCODE/hg38/ \
-                       --fasta-file ../../Genomes/hg38/hg38.fa \
-                       --remap-dir ../../ReMap/ \
-                       --unibind-dir ../../UniBind/
+                     --encode-dir ../../ENCODE/hg38/ \
+                     --fasta-file ../../Genomes/hg38/hg38.fa \
+                     --remap-dir ../../ReMap/ \
+                     --unibind-dir ../../UniBind/
     """
 
     # Globals
@@ -373,7 +373,7 @@ def build_matrix(dhs_file, encode_dir, fasta_file, remap_dir, unibind_dir,
     #######################################################
 
     # Skip if data frame already initialized
-    pandas_file = os.path.join(out_dir, "data_frame.pickle.gz")
+    pandas_file = os.path.join(out_dir, ".data_frame.pickle.gz")
     if not os.path.exists(pandas_file):
 
         # Build a numpy array of sample-specific regions
@@ -522,7 +522,24 @@ def build_matrix(dhs_file, encode_dir, fasta_file, remap_dir, unibind_dir,
     #######################################################
 
     # Skip if file already exists
-    matrix2d_file = os.path.join(out_dir, "matrix2d.npz")
+    matrix2d_file = os.path.join(out_dir, "matrix2d.ReMap.npz")
+    if not os.path.exists(matrix2d_file):
+
+        # Collapse to a 1817918x163 matrix
+        matrix2d = matrix3d.reduce(np.maximum, axis=0).todense().astype("float")
+        # ReMap bound and open regions = 1
+        # Open regions UniBind-only bound and open
+        # regions = 0 (i.e. else multi-model is too sparse)
+        # Rest = None
+        matrix2d[matrix2d == 0] = np.nan
+        matrix2d[matrix2d == 1] = 0
+        matrix2d[matrix2d == 2] = 1
+        matrix2d[matrix2d == 3] = 0
+        matrix2d[matrix2d == 4] = 1
+        np.savez_compressed(matrix2d_file, matrix2d)
+
+    # Skip if file already exists
+    matrix2d_file = os.path.join(out_dir, "matrix2d.ReMap+UniBind.npz")
     if not os.path.exists(matrix2d_file):
 
         # Collapse to a 1817918x163 matrix
