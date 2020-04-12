@@ -10,7 +10,7 @@ import pandas as pd
 from pybedtools import BedTool
 import re
 import sparse
-import subprocess
+import subprocess as sp
 
 from __init__ import ENCODE, ParseUtils
 
@@ -21,7 +21,7 @@ usage: %s --dhs-dir DIR --fasta-file FILE --encode-dir DIR
 
 help_msg = """%s
 builds multiple matrix of bound and open regions across TFs
-and biological samples from ENCODE, ReMap and UniBind data
+and cells/tissues from ENCODE, ReMap and UniBind data
 
   --dhs-file FILE     from get_dhs.sh (e.g. DHS.200bp.bed)
   --encode-dir DIR    output directory from get_encode.py
@@ -92,121 +92,6 @@ def check_args(args):
             args.threads]
         print(": ".join(error))
         exit(0)
-
-def _create_indices(dhs_file, encode_dir, remap_dir, unibind_dir,
-    out_dir=".", threads=1):
-
-    # Get encodes
-    pickle_file = os.path.join(encode_dir, "metadata.GRCh38.accessibility.tsv.pickle")
-    handle = ParseUtils._get_file_handle(pickle_file, "rb")
-    encodes_acc = pickle.load(handle)
-    pickle_file = os.path.join(encode_dir, "metadata.GRCh38.tf.tsv.pickle")
-    handle = ParseUtils._get_file_handle(pickle_file, "rb")
-    encodes_tfs = pickle.load(handle)
-
-    # Get ReMap/UniBind ENCODE assay accessions (ENCSRs) and sample names
-    encsr2sample = {}
-    file_name = os.path.join(remap_dir, "encsr2sample.txt")
-    for line in ParseUtils.parse_file(file_name):
-        encsr, sample = line.split(".")
-        encsr2sample.setdefault(encsr, sample.upper())
-    file_name = os.path.join(unibind_dir, "encsr2sample.txt")
-    for line in ParseUtils.parse_file(file_name):
-        encsr, sample = line.split(".")
-        encsr2sample.setdefault(encsr, sample.upper())
-
-    # Get UniBind TFs 
-    tfs = set()
-    file_name = os.path.join(unibind_dir, "tfs.txt")
-    for tf in ParseUtils.parse_file(file_name):
-        tfs.add(tf)
-
-    # Skip if samples index file already exists
-    samples_idx_file = os.path.join(out_dir, "samples_idx.pickle")
-    xrefs_file = os.path.join(out_dir, ".xrefs.pickle")
-    if not os.path.exists(samples_idx_file):
-        # Get ENCODE samples with accessibility and TFs
-        xrefs = {}
-        samples_acc = set()
-        for accession in encodes_acc:
-            encode = encodes_acc[accession]
-            samples_acc.add(encode.biosample_name)
-        samples_tfs = set()
-        for accession in encodes_tfs:
-            encode = encodes_tfs[accession]
-            if (encode.experiment_accession in encsr2sample and \
-                encode.experiment_target in tfs):
-                if encode.biosample_name in samples_acc:
-                    samples_tfs.add(encode.biosample_name)
-                    sample = encsr2sample[encode.experiment_accession]
-                    xrefs.setdefault(sample, set())
-                    xrefs[sample].add(encode.biosample_name)
-        samples_list = sorted(list(samples_acc.intersection(samples_tfs)))
-        for v, k in enumerate(samples_list):
-            samples_idx.setdefault(v, k)
-            samples_idx.setdefault(k, v)
-        for sample in xrefs:
-            xrefs[sample] = sorted(list(xrefs[sample]))
-        # Write
-        ParseUtils.write(samples_idx_file, json.dumps(samples_idx, **opts))
-        ParseUtils.write(xrefs_file, json.dumps(xrefs, **opts))
-    else:
-        with open(samples_idx_file) as f:
-            samples_idx = json.load(f)
-        with open(xrefs_file) as f:
-            xrefs = json.load(f)
-
-    # Skip if TFs file already exists
-    tfs_idx_file = os.path.join(out_dir, "tfs_idx.json")
-    if not os.path.exists(tfs_idx_file):
-        # Get TFs in ENCODE samples
-        tfs = set()
-        for file_name in os.listdir(unibind_dir):
-            if not file_name.endswith(".pwm.bed"):
-                continue
-            file_name = file_name.split(".")
-            sample = file_name[1].upper()
-            tf = file_name[2]
-            if sample in xrefs:
-                tfs.add(tf)
-        tfs_idx = {k: v for v, k in enumerate(sorted(list(tfs)))}
-        # Write
-        ParseUtils.write(tfs_idx_file, json.dumps(tfs_idx, **opts))
-    else:
-        with open(tfs_idx_file) as f:
-            tfs_idx = json.load(f)
-
-    # Skip if regions file already exists
-    regions_idx_file = os.path.join(out_dir, "regions_idx.json")
-    if not os.path.exists(regions_idx_file):
-        # Get BED files
-        a = BedTool(dhs_file)
-        b = BedTool(os.path.join(encode_dir, "DNase-seq.150bp.bed"))
-        # Get intersections
-        intervals = []
-        its = a.intersect(b, wa=True, wb=True, sorted=True, F=0.5, stream=True)
-        for it in its:
-            encode = encodes_acc[it.fields[-1]]
-            if encode.biosample_name in samples_idx:
-                chrom = it.chrom
-                start = int(it.start)
-                end = int(it.end)
-                interval = Interval(chrom, start, end)
-                if len(intervals) == 0:
-                    intervals.append(interval)
-                elif interval != intervals[-1]:
-                    intervals.append(interval)
-        # Get regions
-        regions = BedTool("".join(map(str, intervals)), from_string=True)
-        regions_idx = {k: v for v, k in enumerate([
-                "%s:%s-%s" % (r.chrom, r.start, r.end) for r in regions
-            ])
-        }
-        # Write
-        ParseUtils.write(regions_idx_file, json.dumps(regions_idx, **opts))
-    else:
-        with open(regions_idx_file) as f:
-            regions_idx = json.load(f)
 
 def _split_data(data_file, threads=1):
     """
@@ -531,7 +416,7 @@ def build_matrix(dhs_file, encode_dir, fasta_file, remap_dir, unibind_dir,
                 n = data[i]
 
         # Initialize data frame w/ open regions
-        # across TFs and biosamples (score = 1)
+        # across TFs and cells/tissues (score = 1)
         data = []
         for k1, v1 in samples_idx.items():
             for k2, v2 in regions_idx.items():
@@ -549,6 +434,77 @@ def build_matrix(dhs_file, encode_dir, fasta_file, remap_dir, unibind_dir,
         ParseUtils.save_compressed_pickle(pandas_file, df)
     else:
         df = ParseUtils.load_compressed_pickle(pandas_file)
+
+    # Skip if completed
+    completed_file = os.path.join(out_dir, ".remap.completed")
+    if not os.path.exists(completed_file):
+
+        # Set index on data frame
+        ixdf = df.set_index(["Biosample", "Region", "TF"])
+        ixdf["Iloc"] = list(df.index)
+        ixdf.loc[(0, 13, 5), "Iloc"]
+
+        # Split data
+        data_file = os.path.join(remap_dir, "summits.bed")
+        split_files = _split_data(data_file, threads)
+
+        # Upsert data frame w/ ReMap-bound and open
+        # regions across TFs and cells/tissues (score = 2)
+        pool = Pool(threads)
+        parallel_upsert = partial(_upsert_ReMap, A=dhs_file)
+        for ilocs in pool.imap(parallel_upsert, split_files):
+            df.Score.iloc[list(ilocs)] = 2
+        df.to_pickle(pandas_file)
+        open(completed_file, "a").close()
+
+    # Skip if completed
+    completed_file = os.path.join(out_dir, ".unibind.completed")
+    if not os.path.exists(completed_file):
+
+        # Set index on data frame
+        ixdf = df.set_index(["Biosample", "Region", "TF"])
+        ixdf["Iloc"] = list(df.index)
+        ixdf.loc[(0, 13, 5), "Iloc"]
+
+        # Split data
+        data_file = os.path.join(unibind_dir, "tfbs.bed")
+        split_files = _split_data(data_file, threads)
+
+        # Upsert data frame w/ UniBind-bound and open
+        # regions (score = 3) or w/ ReMap and UniBind
+        # bound and open regions across TFs and
+        # cells/tissues (score = 4)
+        pool = Pool(threads)
+        parallel_upsert = partial(_upsert_UniBind, A=dhs_file)
+        for ilocs in pool.imap(parallel_upsert, split_files):
+            cobound = []
+            for iloc in ilocs:
+                # i.e. co-bound
+                if df.at[iloc, "Score"] == 2:
+                    cobound.append(iloc)
+            df.Score.iloc[list(ilocs)] = 3
+            df.Score.iloc[cobound] = 4
+        df.to_pickle(pandas_file)
+        open(completed_file, "a").close()
+
+    # Skip if file already exists
+    matrix_file = os.path.join(out_dir, "matrix3d.npz")
+    if not os.path.exists(matrix_file):
+
+        # Create matrix
+        coords = []
+        coords.append(df["Biosample"].tolist())
+        coords.append(df["Region"].tolist())
+        coords.append(df["TF"].tolist())
+        data = df["Score"].tolist()
+        shape = (len(samples_idx), len(regions_idx), len(tfs_idx))
+        matrix3d = sparse.COO(coords, data, shape=shape)
+        sparse.save_npz(matrix_file, matrix3d, compressed=True)
+
+    else:
+
+        # Load sparse matrix
+        matrix3d = sparse.load_npz(matrix_file)
 
     #######################################################
     # Build various 2D matrices for model-training.       #

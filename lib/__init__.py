@@ -6,7 +6,6 @@ import numpy as np
 import os
 import pandas as pd
 import pickle
-import _pickle as cPickle
 import sys
 from zipfile import ZipFile
 
@@ -279,7 +278,7 @@ class ParseUtililities:
         handle = self._get_file_handle(file_name, mode="wb")
 
         # Save
-        cPickle.dump(data_obj, handle)
+        pickle.dump(data_obj, handle, protocol=4)
         handle.close()
 
     def load_compressed_pickle(self, file_name):
@@ -291,7 +290,7 @@ class ParseUtililities:
         handle = self._get_file_handle(file_name, mode="rb")
 
         # Load
-        pkl = cPickle.load(handle)
+        pkl = pickle.load(handle)
         handle.close()
 
         return(pkl)

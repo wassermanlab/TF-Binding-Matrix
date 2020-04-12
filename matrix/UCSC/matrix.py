@@ -21,7 +21,7 @@ usage: %s --dhs-dir DIR --fasta-file FILE --encode-dir DIR
 
 help_msg = """%s
 builds multiple matrix of bound and open regions across TFs
-and biological samples from ENCODE, ReMap and UniBind data
+and cells/tissues from ENCODE, ReMap and UniBind data
 
   --dhs-file FILE     from get_dhs.sh (e.g. DHS.200bp.bed)
   --encode-dir DIR    output directory from get_encode.py
@@ -427,7 +427,7 @@ def build_matrix(dhs_file, encode_dir, fasta_file, remap_dir, unibind_dir,
                 n = data[i]
 
         # Initialize data frame w/ open regions
-        # across TFs and biosamples (score = 1)
+        # across TFs and cells/tissues (score = 1)
         data = []
         for k1, v1 in samples_idx.items():
             for k2, v2 in regions_idx.items():
@@ -460,7 +460,7 @@ def build_matrix(dhs_file, encode_dir, fasta_file, remap_dir, unibind_dir,
         split_files = _split_data(data_file, threads)
 
         # Upsert data frame w/ ReMap-bound and open
-        # regions across TFs and biosamples (score = 2)
+        # regions across TFs and cells/tissues (score = 2)
         pool = Pool(threads)
         parallel_upsert = partial(_upsert_ReMap, A=dhs_file)
         for ilocs in pool.imap(parallel_upsert, split_files):
@@ -484,7 +484,7 @@ def build_matrix(dhs_file, encode_dir, fasta_file, remap_dir, unibind_dir,
         # Upsert data frame w/ UniBind-bound and open
         # regions (score = 3) or w/ ReMap and UniBind
         # bound and open regions across TFs and
-        # biosamples (score = 4)
+        # cells/tissues (score = 4)
         pool = Pool(threads)
         parallel_upsert = partial(_upsert_UniBind, A=dhs_file)
         for ilocs in pool.imap(parallel_upsert, split_files):
