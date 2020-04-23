@@ -238,12 +238,17 @@ def _parse_ENCODE_metadata(genome, metadata_file):
             experiment_acc_idx = line.index("Experiment accession")
             experiment_type_idx = line.index("Assay")
             experiment_target_idx = line.index("Experiment target")
-            genome_assembly_idx = line.index("Assembly")
             output_format_idx = line.index("File format")
             output_type_idx = line.index("Output type")
             status_idx = line.index("File Status")
             treatment_idx = line.index("Biosample treatments")
             genetic_modifications_idx = line.index("Biosample genetic modifications methods")
+            # Fixes
+            if genome == "mm9" or genome == "mm10":
+                genome_assembly_idx = line.index("File assembly")
+                status_idx -= 1
+            else:
+                genome_assembly_idx = line.index("Assembly")
 
     return(encode_objects)
 
