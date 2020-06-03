@@ -11,6 +11,6 @@ git clone https://github.com/wassermanlab/TF-Binding-Matrix.git
 ## Configuration
 
 ```
-conda create -n matrix -c bioconda -c conda-forge python=3.7 biopython coreutils git-lfs \
-    pandas pybedtools pyliftover sparse wget
+conda create -n matrix -c bioconda -c conda-forge python=3.7 biopython coreutils pandas \
+    pybedtools pyliftover sparse wget
 ```
