@@ -6,7 +6,7 @@ git lfs clone https://github.com/wassermanlab/TF-Binding-Matrix.git
 
 ## Requirements
 * [GNU Core Utilities](https://www.gnu.org/software/coreutils/), including [Wget](https://www.gnu.org/software/wget/)
-* [Python ≥3.7] with the following libraries: [Biopython](https://biopython.org), [pandas](https://pandas.pydata.org/), [pybedtools](https://daler.github.io/pybedtools/), [pyliftover](https://github.com/konstantint/pyliftover), [sparse](https://sparse.pydata.org/en/stable/)
+* [Python ≥3.7](https://www.python.org) with the following libraries: [Biopython](https://biopython.org), [pandas](https://pandas.pydata.org/), [pybedtools](https://daler.github.io/pybedtools/), [pyliftover](https://github.com/konstantint/pyliftover), [sparse](https://sparse.pydata.org/en/stable/)
 
 ## Configuration
 
