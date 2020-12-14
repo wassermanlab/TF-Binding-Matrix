@@ -35,8 +35,28 @@ conda create -c bioconda -c conda-forge python=3.7 biopython coreutils pandas \
 ## Steps
 The following steps were followed to generate the TF binding matrices for the transfer learning manuscript.
 ### 1. Data download
-#### 1.1 Hg38
-#### 1.2 ENCODE
-#### 1.3 UCSC
-#### 1.4 UCSC
-#### 1.5 UCSC
+#### 1.1 DNase I hypersensitive sites
+```
+cd ./DHS/UCSC/
+./get_dhs.sh
+```
+#### 1.2 ENCODE accessibility and TF binding
+```
+cd ./ENCODE/
+./get_encode.sh
+```
+#### 1.3 Hg38 genome sequence
+```
+cd ./Genomes/hg38/
+./get_hg38.sh
+```
+#### 1.4 ReMap TF binding
+```
+cd ./ReMap/
+./get_remap.sh
+```
+#### 1.5 UniBind TFBSs
+```
+cd ./UniBind/
+./get_unibind.sh 
+```

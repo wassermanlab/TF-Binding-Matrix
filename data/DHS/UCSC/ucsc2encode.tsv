@@ -1,0 +1,98 @@
+# Date: April 3, 2020
+# Author: Oriol Fornés Crespo
+UCSC (source name)	ENCODE (biosample term name)
+A549	A549
+AG04449	AG04449
+AG04450	AG04450
+AG09309	AG09309
+AG09319	AG09319
+AG10803	AG10803
+AoAF	fibroblast of the aortic adventitia
+BE2_C	BE2C
+BJ	BJ
+CD20+_RO01778	B cell
+Caco-2	Caco-2
+GM04503	GM04503
+GM04504	GM04504
+GM06990	GM06990
+GM12865	GM12865
+GM12878	GM12878
+H7-hESC	H7
+H7-hESC+diffProtA_14d	cardiac muscle cell
+H7-hESC+diffProtA_5d	cardiovascular progenitor cell
+HA-h	astrocyte of the hippocampus
+HA-sp	astrocyte of the spinal cord
+HAEpiC	amniotic epithelial cell
+HAc	astrocyte of the cerebellum
+HBMEC	brain microvascular endothelial cell
+HBVSMC	smooth muscle cell of the brain vasculature
+HCF	cardiac fibroblast
+HCFaa	cardiac fibroblast
+HCM	cardiac muscle cell
+HCPEpiC	choroid plexus epithelial cell
+HCT-116	HCT116
+HConF	fibroblast of the conjunctiva
+HEEpiC	epithelial cell of esophagus
+HFF	foreskin fibroblast
+HFF-Myc	HFF-Myc
+HGF	fibroblast of gingiva
+HIPEpiC	iris pigment epithelial cell
+HL-60	HL-60
+HMEC	mammary epithelial cell
+HMF	fibroblast of mammary gland
+HMVEC-LBl	lung microvascular endothelial cell
+HMVEC-LLy	lung microvascular endothelial cell
+HMVEC-dAd	dermis blood vessel endothelial cell
+HMVEC-dBl-Ad	dermis blood vessel endothelial cell
+HMVEC-dBl-Neo	dermis blood vessel endothelial cell
+HMVEC-dLy-Ad	dermis microvascular lymphatic vessel endothelial cell
+HMVEC-dLy-Neo	dermis microvascular lymphatic vessel endothelial cell
+HMVEC-dNeo	dermis blood vessel endothelial cell
+HNPCEpiC	non-pigmented ciliary epithelial cell
+HPAF	fibroblast of pulmonary artery
+HPF	fibroblast of lung
+HPdLF	fibroblast of peridontal ligament
+HRCEpiC	renal cortical epithelial cell
+HRE	kidney epithelial cell
+HRGEC	glomerular endothelial cell
+HRPEpiC	retinal pigment epithelial cell
+HSMM	skeletal muscle myoblast
+HSMMtube	myotube
+HUVEC	endothelial cell of umbilical vein
+HVMF	fibroblast of villous mesenchyme
+HeLa-S3	HeLa-S3
+HepG2	HepG2
+Jurkat	Jurkat clone E61
+K562	K562
+LHCN-M2	LHCN-M2
+LHCN-M2+DIFF_4d	myocyte
+LNCaP	LNCaP clone FGC
+M059J	M059J
+MCF-7	MCF-7
+MCF-7+Estradiol_100nM_1hr	MCF-7
+MCF-7+Estradiol_ctrl_0hr	MCF-7
+Monocytes-CD14+_RO01746	CD14-positive monocyte
+NB4	NB4
+NH-A	astrocyte
+NHBE_RA+RA	bronchial epithelial cell
+NHDF-Ad	fibroblast of dermis
+NHDF-neo	foreskin fibroblast
+NHEK	keratinocyte
+NHLF	fibroblast of lung
+NT2-D1	NT2/D1
+PANC-1	Panc1
+PrEC	epithelial cell of prostate
+RPMI-7951	RPMI7951
+RPTEC	epithelial cell of proximal tubule
+SAEC	bronchial epithelial cell
+SK-N-MC	SK-N-MC
+SK-N-SH_RA+RA	SK-N-SH
+SKMC	skeletal muscle cell
+T-47D	T47D
+Th1	T-helper 1 cell
+Th1_Wb54553204	T-helper 1 cell
+Th2	T-helper 2 cell
+WERI-Rb-1	WERI-Rb-1
+WI-38	WI38
+WI-38+4OHTAM_20nM_72hr	WI38
+bone_marrow_MSC	stromal cell of bone marrow

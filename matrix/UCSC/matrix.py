@@ -221,11 +221,11 @@ def main():
 def build_matrix(dhs_file, encode_dir, fasta_file, remap_dir, unibind_dir,
     out_dir=".", threads=1):
     """
-    e.g. ./matrix.py --dhs-file ../../DHS/UCSC/DHS.200bp.bed \
-                     --encode-dir ../../ENCODE/hg38/ \
-                     --fasta-file ../../Genomes/hg38/hg38.fa \
-                     --remap-dir ../../ReMap/ \
-                     --unibind-dir ../../UniBind/
+    e.g. ./matrix.py --dhs-file ../../data/DHS/UCSC/DHS.200bp.bed \
+                     --encode-dir ../../data/ENCODE/hg38/ \
+                     --fasta-file ../../data/Genomes/hg38/hg38.fa \
+                     --remap-dir ../../data/ReMap/ \
+                     --unibind-dir ../../data/UniBind/
     """
 
     # Globals
@@ -366,11 +366,12 @@ def build_matrix(dhs_file, encode_dir, fasta_file, remap_dir, unibind_dir,
         # Load pickle
         tfs_idx = ParseUtils.load_compressed_pickle(tfs_idx_file)
 
-    #######################################################
-    # Since it is not possible to build a 1817918x163x52  #
-    # 3D matrix (i.e. requires ~123GB of memory), instead #
-    # build a sparse 3D matrix of 89,854,212 cells.       #
-    #######################################################
+    ########################################################
+    # Since it is computationally expensive to build a 3D  #
+    # matrix with dimensions 1817918x163x52 (i.e. requires #
+    # ~123GB of memory), instead build a sparse 3D matrix  #
+    # of 89,854,212 cells.                                 #
+    ########################################################
 
     # Skip if data frame already initialized
     pandas_file = os.path.join(out_dir, ".data_frame.pickle.gz")
