@@ -1,12 +1,14 @@
 # TF binding matrix
-A sparse 3D matrix of 1,817,918 bound and open regions across 163 transcription factors and 52 cell and tissue types
+A sparse 3D matrix of ~~1,817,918~~2,503,732 bound and open regions across ~~163~~175 transcription factors and ~~52~~70 cell and tissue types
 
 ```
 git clone https://github.com/wassermanlab/TF-Binding-Matrix.git
 ```
 
+![alt text](https://github.com/wassermanlab/TF-Binding-Matrix/blob/master/matrix.png?raw=true)
+
 ## News
-01/04/2020 We have expanded the matrix using recent data from [ENCODE](https://www.encodeproject.org/files/ENCFF503GCK/); it now covers 2,503,732 bound/open regions across 175 TFs and 70 cells/tissues
+01/09/2020 We have expanded the matrix using recent data from [ENCODE](https://www.encodeproject.org/files/ENCFF503GCK/)
 
 ## Content
 * The `examples` folder contains the sequences of two transcription factors (TFs) and one protein that is not a transcription factor, such as the human serine/threonine-protein kinase [mTOR](https://www.uniprot.org/uniprot/P42345)
