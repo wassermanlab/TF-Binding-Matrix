@@ -1,5 +1,6 @@
 # TF binding matrix
 A sparse 3D matrix of ~~1,817,918~~ 2,503,732 bound and open regions across ~~163~~ 175 transcription factors and ~~52~~ 70 cell and tissue types
+
 ![alt text](https://github.com/wassermanlab/TF-Binding-Matrix/blob/master/matrix.png?raw=true)
 
 ## News
