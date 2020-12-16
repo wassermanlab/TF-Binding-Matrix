@@ -6,7 +6,7 @@ git clone https://github.com/wassermanlab/TF-Binding-Matrix.git
 ```
 
 ## News
-01/06/2020 Using recent data from [ENCODE](https://www.encodeproject.org/files/ENCFF503GCK/), we have expanded the matrix; it now covers 2,503,732 bound/open regions across 175 TFs and 70 cells/tissues
+01/04/2020 We have expanded the matrix using recent data from [ENCODE](https://www.encodeproject.org/files/ENCFF503GCK/); it now covers 2,503,732 bound/open regions across 175 TFs and 70 cells/tissues
 
 ## Content
 * The `examples` folder contains the sequences of two transcription factors (TFs) and one protein that is not a transcription factor, such as the human serine/threonine-protein kinase [mTOR](https://www.uniprot.org/uniprot/P42345)
@@ -18,18 +18,13 @@ git clone https://github.com/wassermanlab/TF-Binding-Matrix.git
 The original scripts used for the publication of [JASPAR 2016](https://doi.org/10.1093/nar/gkv1176) have been placed in the folder [`version-1.0`](https://github.com/wassermanlab/JASPAR-profile-inference/tree/master/version-1.0).
 
 ## Dependencies
-* [BLAST+](https://blast.ncbi.nlm.nih.gov/Blast.cgi)
-* [HMMER](http://hmmer.org/) (version ≥3.0)
-* [Python 3.7](https://www.python.org/download/releases/3.7/) with the following libraries: [Biopython](http://biopython.org) (<1.74), [CoreAPI](http://www.coreapi.org), [glmnet](https://github.com/civisanalytics/python-glmnet), [NumPy](https://numpy.org/), [pandas](https://pandas.pydata.org/), [ProDy](http://prody.csb.pitt.edu/), [SciPy](https://www.scipy.org/), [scikit-learn](https://scikit-learn.org/stable/) and [tqdm](https://tqdm.github.io) 
-* [Tomtom](http://meme-suite.org/doc/tomtom.html) as distributed in the [MEME](http://meme-suite.org/index.html) suite (version ≥5.0)
+* [GNU core utilities](https://www.gnu.org/software/coreutils/) with [Wget](https://www.gnu.org/software/wget/)
+* [Python 3.7](https://www.python.org/download/releases/3.7/) with the following libraries: [Biopython](http://biopython.org) (<1.74), [NumPy](https://numpy.org/), [pandas](https://pandas.pydata.org/), [pybedtools](https://daler.github.io/pybedtools/), and [sparse](https://sparse.pydata.org/en/stable/) 
 
-Note that for running `infer_profile.py`, neither Tomtom nor the CoreAPI, glmnet, ProDy and scikit-learn python packages are required.
-
-## Installation
-All dependencies can be installed through the [conda](https://docs.conda.io/en/latest/) package manager:
+All dependencies can be easily installed through the [conda](https://docs.conda.io/en/latest/) package manager:
 ```
-conda create -c bioconda -c conda-forge python=3.7 biopython coreutils pandas \
-    pybedtools pyliftover sparse wget
+conda create -c bioconda -c conda-forge python=3.7 biopython coreutils numpy \
+    pandas pybedtools sparse wget
 ```
 
 ## Steps
