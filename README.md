@@ -65,4 +65,4 @@ cd ./matrix/UCSC/
             --remap-dir ../../data/ReMap/ \
             --unibind-dir ../../data/UniBind/
 ```
-The final matrices can be found under the [200bp](https://github.com/wassermanlab/TF-Binding-Matrix/blob/master/matrix/UCSC/200bp/) folder with the names [matrix2d.ReMap+UniBind.sparse.npz](https://github.com/wassermanlab/TF-Binding-Matrix/blob/master/matrix/UCSC/200bp/matrix2d.ReMap%2BUniBind.sparse.npz) and [matrix2d.ReMap+UniBind.less-sparse.npz](https://github.com/wassermanlab/TF-Binding-Matrix/blob/master/matrix/UCSC/200bp/matrix2d.ReMap%2BUniBind.less-sparse.npz).
+The final matrices can be found [here](https://github.com/wassermanlab/TF-Binding-Matrix/blob/master/matrix/UCSC/200bp/) under the names [matrix2d.ReMap+UniBind.sparse.npz](https://github.com/wassermanlab/TF-Binding-Matrix/blob/master/matrix/UCSC/200bp/matrix2d.ReMap%2BUniBind.sparse.npz) and [matrix2d.ReMap+UniBind.less-sparse.npz](https://github.com/wassermanlab/TF-Binding-Matrix/blob/master/matrix/UCSC/200bp/matrix2d.ReMap%2BUniBind.less-sparse.npz).
