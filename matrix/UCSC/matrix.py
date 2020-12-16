@@ -221,11 +221,11 @@ def main():
 def build_matrix(dhs_file, encode_dir, fasta_file, remap_dir, unibind_dir,
     out_dir=".", threads=1):
     """
-    e.g. ./matrix.py --dhs-file ../../DHS/UCSC/DHS.200bp.bed \
-                     --encode-dir ../../ENCODE/hg38/ \
-                     --fasta-file ../../Genomes/hg38/hg38.fa \
-                     --remap-dir ../../ReMap/ \
-                     --unibind-dir ../../UniBind/
+    e.g. ./matrix.py --dhs-file ../../data/DHS/UCSC/DHS.200bp.bed \
+                     --encode-dir ../../data/ENCODE/hg38/ \
+                     --fasta-file ../../data/Genomes/hg38/hg38.fa \
+                     --remap-dir ../../data/ReMap/ \
+                     --unibind-dir ../../data/UniBind/
     """
 
     # Globals

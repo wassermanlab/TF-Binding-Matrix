@@ -1,19 +1,15 @@
 # TF binding matrix
 A sparse 3D matrix of ~~1,817,918~~ 2,503,732 bound and open regions across ~~163~~ 175 transcription factors and ~~52~~ 70 cell and tissue types
-
 ![alt text](https://github.com/wassermanlab/TF-Binding-Matrix/blob/master/matrix.png?raw=true)
 
 ## News
 01/09/2020 We have expanded the matrix using recent data from [ENCODE](https://www.encodeproject.org/files/ENCFF503GCK/)
 
 ## Content
-* The `examples` folder contains the sequences of two transcription factors (TFs) and one protein that is not a transcription factor, such as the human serine/threonine-protein kinase [mTOR](https://www.uniprot.org/uniprot/P42345)
-* The `files` folder contains the output of the script [`get_files.py`](https://github.com/wassermanlab/JASPAR-profile-inference/blob/master/files/get_files.py), which downloads TF sequences from [UniProt](https://www.uniprot.org/), DNA-binding domains (DBDs) from [Pfam](https://pfam.xfam.org/), and retrieves cut-offs on the DBD percentage of sequence identity from [Cis-BP](http://cisbp.ccbr.utoronto.ca/), etc.
-* The `models` folder contains the similarity regression models created by calling the script [`pairwise.py`](https://github.com/wassermanlab/JASPAR-profile-inference/blob/master/models/pairwise.py) followed by [`regression.py`](https://github.com/wassermanlab/JASPAR-profile-inference/blob/master/models/regression.py)
-* The script [`infer_profile.py`](https://github.com/wassermanlab/JASPAR-profile-inference/blob/master/infer_profile.py) takes as input the folders `files` and `models`, plus one or more proteic sequences in [FASTA format](https://en.wikipedia.org/wiki/FASTA_format) (_e.g._ a proteome), and infers DNA-binding profiles from JASPAR 
-* The file [`environment.yml`](https://github.com/wassermanlab/JASPAR-profile-inference/blob/master/environment.yml) contains the conda environment used to develop the profile inference tool for JASPAR 2020 (see installation)
-
-The original scripts used for the publication of [JASPAR 2016](https://doi.org/10.1093/nar/gkv1176) have been placed in the folder [`version-1.0`](https://github.com/wassermanlab/JASPAR-profile-inference/tree/master/version-1.0).
+* The `data` folder contains scripts to download all the data necessary to build the matrices
+* The `lib` folder contains global functions to be used by all Python scripts
+* The `matrix` folder contains the Python scripts to build the matrices
+* The file [`environment.yml`](https://github.com/wassermanlab/JASPAR-profile-inference/blob/master/environment.yml) contains the conda environment used to build the matrices (see dependencies)
 
 ## Dependencies
 * [GNU core utilities](https://www.gnu.org/software/coreutils/) with [Wget](https://www.gnu.org/software/wget/)
@@ -21,8 +17,8 @@ The original scripts used for the publication of [JASPAR 2016](https://doi.org/1
 
 All dependencies can be easily installed through the [conda](https://docs.conda.io/en/latest/) package manager:
 ```
-conda create -c bioconda -c conda-forge python=3.7 biopython coreutils numpy \
-    pandas pybedtools sparse wget
+conda create -n TfBindingMatrix -c bioconda -c conda-forge python=3.7 biopython \
+    coreutils numpy pandas pybedtools sparse wget
 ```
 
 ## Steps
@@ -58,3 +54,14 @@ Download all human PWM-based TFBS predictions from [UniBind](https://unibind.uio
 cd ./UniBind/
 ./get_unibind.sh 
 ```
+### 2. Matrices
+Build two TF binding matrices (i.e. data structures containing information about TF binding events, not motif models), one more sparse and the other less sparse. The matrices aggregate binding data, both from ChIP-seq experiments and TFBS predictions, of 163 TFs to 1,817,918 accessible genomic regions (*i.e.* DHSs) in 52 cell and tissue types. The matrices are saved as 2D numpy arrays, with rows and columns being individual TFs and DHS regions, respectively.
+```
+cd ./matrix/UCSC/
+./matrix.py --dhs-file ../../data/DHS/UCSC/DHS.200bp.bed \
+            --encode-dir ../../data/ENCODE/hg38/ \
+            --fasta-file ../../data/Genomes/hg38/hg38.fa \
+            --remap-dir ../../data/ReMap/ \
+            --unibind-dir ../../data/UniBind/
+```
+The final matrices can be found under the `200bp` folder with the names [matrix2d.ReMap+UniBind.sparse.npz](https://github.com/wassermanlab/TF-Binding-Matrix/blob/master/matrix/UCSC/200bp/matrix2d.ReMap%2BUniBind.sparse.npz) and [matrix2d.ReMap+UniBind.less-sparse.npz](https://github.com/wassermanlab/TF-Binding-Matrix/blob/master/matrix/UCSC/200bp/matrix2d.ReMap%2BUniBind.less-sparse.npz).
