@@ -353,11 +353,11 @@ def build_matrix(dhs_file, encode_dir, fasta_file, remap_dir, unibind_dir,
         # Load pickle
         tfs_idx = ParseUtils.load_compressed_pickle(tfs_idx_file)
 
-    #######################################################
-    # Since it is not possible to build a 2431675x174x66  #
-    # 3D matrix (i.e. requires ~223GB of memory), isntead #
-    # build a sparse 3D matrix of 181,694,520 cells.      #
-    #######################################################
+    ########################################################
+    # Since it is computationally too expensive to build a #
+    # 2431675x174x66 matrix (i.e. requires ~223GB of RAM), #
+    # instead build a sparse 3D matrix of 181694520 cells. #
+    ########################################################
 
     # Skip if data frame already initialized
     pandas_file = os.path.join(out_dir, ".data_frame.pickle.gz")
@@ -506,37 +506,131 @@ def build_matrix(dhs_file, encode_dir, fasta_file, remap_dir, unibind_dir,
         # Load sparse matrix
         matrix3d = sparse.load_npz(matrix_file)
 
+    print(matrix3d.shape)
+    exit(0)
+
     #######################################################
-    # Build various 2D matrices for model-training.       #
+    # Build two matrices for transfer learning.           #
     #######################################################
+
+    # # Skip if file already exists
+    # matrix2d_file = os.path.join(out_dir, "matrix2d.ReMap.resolved.npz")
+    # if not os.path.exists(matrix2d_file):
+
+    #     # Collapse into a 2431675x174 matrix
+    #     matrix2d = matrix3d.reduce(np.maximum, axis=0).todense().astype("float")
+    #     # ReMap bound and open regions (2 and 4) = 1
+    #     # Remaining regions (0, 1 and 3) = 0
+    #     matrix2d[matrix2d == 0] = 0
+    #     matrix2d[matrix2d == 1] = 0
+    #     matrix2d[matrix2d == 2] = 1
+    #     matrix2d[matrix2d == 3] = 0
+    #     matrix2d[matrix2d == 4] = 1
+    #     np.savez_compressed(matrix2d_file, matrix2d)
+
+    # # Skip if file already exists (i.e. for pre-training)
+    # matrix2d_file = os.path.join(out_dir, "matrix2d.ReMap.less-sparse.npz")
+    # if not os.path.exists(matrix2d_file):
+
+    #     # Collapse into a 2431675x174 matrix
+    #     matrix2d = matrix3d.reduce(np.maximum, axis=0).todense().astype("float")
+    #     # ReMap bound and open regions (2 and 4) = 1
+    #     # Open regions (1) and UniBind-only bound and open regions (3) = 0
+    #     # Remaining regions (0) = 0
+    #     matrix2d[matrix2d == 0] = np.nan
+    #     matrix2d[matrix2d == 1] = 0
+    #     matrix2d[matrix2d == 2] = 1
+    #     matrix2d[matrix2d == 3] = 0
+    #     matrix2d[matrix2d == 4] = 1
+    #     np.savez_compressed(matrix2d_file, matrix2d)
+
+    # # Skip if file already exists
+    # matrix2d_file = os.path.join(out_dir, "matrix2d.ReMap.sparse.npz")
+    # if not os.path.exists(matrix2d_file):
+
+    #     # Collapse into a 2431675x174 matrix
+    #     matrix2d = matrix3d.reduce(np.maximum, axis=0).todense().astype("float")
+    #     # ReMap bound and open regions (2 and 4) = 1
+    #     # Open regions (1) = 0
+    #     # Remaining regions (0) and UniBind-only bound and open regions (3) = None
+    #     matrix2d[matrix2d == 0] = np.nan
+    #     matrix2d[matrix2d == 1] = 0
+    #     matrix2d[matrix2d == 2] = 1
+    #     matrix2d[matrix2d == 3] = np.nan
+    #     matrix2d[matrix2d == 4] = 1
+    #     np.savez_compressed(matrix2d_file, matrix2d)
+
+    # # Skip if file already exists
+    # matrix2d_file = os.path.join(out_dir, "matrix2d.UniBind.resolved.npz")
+    # if not os.path.exists(matrix2d_file):
+
+    #     # Collapse into a 2431675x174 matrix
+    #     matrix2d = matrix3d.reduce(np.maximum, axis=0).todense().astype("float")
+    #     # UniBind bound and open regions (3 and 4) = 1
+    #     # Remaining regions (0, 1 and 2) = 0
+    #     matrix2d[matrix2d == 0] = 0
+    #     matrix2d[matrix2d == 1] = 0
+    #     matrix2d[matrix2d == 2] = 0
+    #     matrix2d[matrix2d == 3] = 1
+    #     matrix2d[matrix2d == 4] = 1
+    #     np.savez_compressed(matrix2d_file, matrix2d)
+
+    # # Skip if file already exists
+    # matrix2d_file = os.path.join(out_dir, "matrix2d.UniBind.less-sparse.npz")
+    # if not os.path.exists(matrix2d_file):
+
+    #     # Collapse into a 2431675x174 matrix
+    #     matrix2d = matrix3d.reduce(np.maximum, axis=0).todense().astype("float")
+    #     # UniBind bound and open regions (3 and 4) = 1
+    #     # Open regions (1) and ReMap-only bound and open regions (2) = 0
+    #     # Remaining regions (0) = 0
+    #     matrix2d[matrix2d == 0] = np.nan
+    #     matrix2d[matrix2d == 1] = 0
+    #     matrix2d[matrix2d == 2] = 0
+    #     matrix2d[matrix2d == 3] = 1
+    #     matrix2d[matrix2d == 4] = 1
+    #     np.savez_compressed(matrix2d_file, matrix2d)
+
+    # # Skip if file already exists
+    # matrix2d_file = os.path.join(out_dir, "matrix2d.UniBind.sparse.npz")
+    # if not os.path.exists(matrix2d_file):
+
+    #     # Collapse into a 2431675x174 matrix
+    #     matrix2d = matrix3d.reduce(np.maximum, axis=0).todense().astype("float")
+    #     # UniBind bound and open regions (3 and 4) = 1
+    #     # Open regions (1) = 0
+    #     # Remaining regions (0) and ReMap-only bound and open regions (2) = None
+    #     matrix2d[matrix2d == 0] = np.nan
+    #     matrix2d[matrix2d == 1] = 0
+    #     matrix2d[matrix2d == 2] = np.nan
+    #     matrix2d[matrix2d == 3] = 1
+    #     matrix2d[matrix2d == 4] = 1
+    #     np.savez_compressed(matrix2d_file, matrix2d)
+
+    # # Skip if file already exists
+    # matrix2d_file = os.path.join(out_dir, "matrix2d.ReMap+UniBind.resolved.npz")
+    # if not os.path.exists(matrix2d_file):
+
+    #     # Collapse into a 2431675x174 matrix
+    #     matrix2d = matrix3d.reduce(np.maximum, axis=0).todense().astype("float")
+    #     # ReMap AND UniBind bound and open regions (4) = 1
+    #     # Remaining regions (0, 1, 2, 3) = 0
+    #     matrix2d[matrix2d == 0] = 0
+    #     matrix2d[matrix2d == 1] = 0
+    #     matrix2d[matrix2d == 2] = 0
+    #     matrix2d[matrix2d == 3] = 0
+    #     matrix2d[matrix2d == 4] = 1
+    #     np.savez_compressed(matrix2d_file, matrix2d)
 
     # Skip if file already exists
-    matrix2d_file = os.path.join(out_dir, "matrix2d.ReMap.npz")
+    matrix2d_file = os.path.join(out_dir, "matrix2d.ReMap+UniBind.less-sparse.npz")
     if not os.path.exists(matrix2d_file):
 
-        # Collapse to a 1817918x163 matrix
+        # Collapse into a 2431675x174 matrix
         matrix2d = matrix3d.reduce(np.maximum, axis=0).todense().astype("float")
-        # ReMap bound and open regions = 1
-        # Open regions UniBind-only bound and open
-        # regions = 0 (i.e. else multi-model is too sparse)
-        # Rest = None
-        matrix2d[matrix2d == 0] = np.nan
-        matrix2d[matrix2d == 1] = 0
-        matrix2d[matrix2d == 2] = 1
-        matrix2d[matrix2d == 3] = 0
-        matrix2d[matrix2d == 4] = 1
-        np.savez_compressed(matrix2d_file, matrix2d)
-
-    # Skip if file already exists
-    matrix2d_file = os.path.join(out_dir, "matrix2d.ReMap+UniBind.npz")
-    if not os.path.exists(matrix2d_file):
-
-        # Collapse to a 1817918x163 matrix
-        matrix2d = matrix3d.reduce(np.maximum, axis=0).todense().astype("float")
-        # ReMap AND UniBind bound and open regions = 1
-        # Open regions, ReMap OR UniBind-only bound and open
-        # regions = 0 (i.e. else multi-model is too sparse)
-        # Rest = None
+        # ReMap AND UniBind bound and open regions (4) = 1
+        # Open regions (1), ReMap-/UniBind-only bound and open regions (2 and 3) = 0
+        # Remaining regions (0) = None
         matrix2d[matrix2d == 0] = np.nan
         matrix2d[matrix2d == 1] = 0
         matrix2d[matrix2d == 2] = 0
@@ -544,69 +638,171 @@ def build_matrix(dhs_file, encode_dir, fasta_file, remap_dir, unibind_dir,
         matrix2d[matrix2d == 4] = 1
         np.savez_compressed(matrix2d_file, matrix2d)
 
-    # For each TF...
-    for tf in sorted(tfs_idx, key=lambda x: tfs_idx[x]):
-
-        # Skip if file already exists
-        matrix2d_file = os.path.join(out_dir, "matrix2d.%s.npz" % tf)
-        if not os.path.exists(matrix2d_file):
-            # Select a slice of 3D matrix; size = 1817918x52
-            matrix2d = matrix3d[:,:,tfs_idx[tf]].todense().astype("float")
-            # ReMap and UniBind bound and open regions = 1
-            # Open regions = 0
-            # Rest = None (i.e. avoid confounding factors)
-            matrix2d[matrix2d == 0] = np.nan
-            matrix2d[matrix2d == 1] = 0
-            matrix2d[matrix2d == 2] = np.nan
-            matrix2d[matrix2d == 3] = np.nan
-            matrix2d[matrix2d == 4] = 1
-            np.savez_compressed(matrix2d_file, matrix2d)
-
-    # For each sample...
-    for s in sorted(samples_idx, key=lambda x: samples_idx[x]):
-
-        # Skip if file already exists
-        biosample_name = s.replace(" ", "_").replace("/", "-")
-        matrix2d_file = os.path.join(out_dir, "matrix2d.%s.npz" % biosample_name)
-        if not os.path.exists(matrix2d_file):
-            # Select a slice of 3D matrix; size = 1817918x163
-            matrix2d = matrix3d[samples_idx[s],:,:].todense().astype("float")
-            # ReMap and UniBind bound and open regions = 1
-            # Open regions = 0
-            # Rest = None (i.e. avoid confounding factors)
-            matrix2d[matrix2d == 0] = np.nan
-            matrix2d[matrix2d == 1] = 0
-            matrix2d[matrix2d == 2] = np.nan
-            matrix2d[matrix2d == 3] = np.nan
-            matrix2d[matrix2d == 4] = 1
-            np.savez_compressed(matrix2d_file, matrix2d)
-
-    #######################################################
-    # Create FASTA file for model-training.               #
-    #######################################################
-
     # Skip if file already exists
-    sequences_file = os.path.join(out_dir, "sequences.fa.gz")
-    if not os.path.exists(sequences_file):
+    matrix2d_file = os.path.join(out_dir, "matrix2d.ReMap+UniBind.sparse.npz")
+    if not os.path.exists(matrix2d_file):
+
+        # Collapse into a 2431675x174 matrix
+        matrix2d = matrix3d.reduce(np.maximum, axis=0).todense().astype("float")
+        # ReMap AND UniBind bound and open regions (4) = 1
+        # Open regions (1) = 0
+        # Remaining regions (0, 2, 3) = None
+        matrix2d[matrix2d == 0] = np.nan
+        matrix2d[matrix2d == 1] = 0
+        matrix2d[matrix2d == 2] = np.nan
+        matrix2d[matrix2d == 3] = np.nan
+        matrix2d[matrix2d == 4] = 1
+        np.savez_compressed(matrix2d_file, matrix2d)
+
+    # # For each TF...
+    # for tf in sorted(tfs_idx, key=lambda x: tfs_idx[x]):
+
+    #     # Skip if file already exists
+    #     matrix2d_file = os.path.join(out_dir, "matrix2d.%s.ReMap.sparse.npz" % tf)
+    #     if not os.path.exists(matrix2d_file):
+    #         # Select a slice of 3D matrix; size = 2431675x66
+    #         matrix2d = matrix3d[:,:,tfs_idx[tf]].todense().astype("float")
+    #         # ReMap bound and open regions (2 and 4) = 1
+    #         # Open regions (1) = 0
+    #         # Remaining regions (0) and UniBind-only bound and open regions (3) = None
+    #         matrix2d[matrix2d == 0] = np.nan
+    #         matrix2d[matrix2d == 1] = 0
+    #         matrix2d[matrix2d == 2] = 1
+    #         matrix2d[matrix2d == 3] = np.nan
+    #         matrix2d[matrix2d == 4] = 1
+    #         np.savez_compressed(matrix2d_file, matrix2d)
+
+    #     # Skip if file already exists
+    #     matrix2d_file = os.path.join(out_dir, "matrix2d.%s.UniBind.sparse.npz" % tf)
+    #     if not os.path.exists(matrix2d_file):
+    #         # Select a slice of 3D matrix; size = 2431675x66
+    #         matrix2d = matrix3d[:,:,tfs_idx[tf]].todense().astype("float")
+    #         # UniBind bound and open regions (3 and 4) = 1
+    #         # Open regions (1) = 0
+    #         # Remaining regions (0) and ReMap-only bound and open regions (2) = None
+    #         matrix2d[matrix2d == 0] = np.nan
+    #         matrix2d[matrix2d == 1] = 0
+    #         matrix2d[matrix2d == 2] = np.nan
+    #         matrix2d[matrix2d == 3] = 1
+    #         matrix2d[matrix2d == 4] = 1
+    #         np.savez_compressed(matrix2d_file, matrix2d)
+
+    #     # Skip if file already exists
+    #     matrix2d_file = os.path.join(out_dir, "matrix2d.%s.ReMap+UniBind.sparse.npz" % tf)
+    #     if not os.path.exists(matrix2d_file):
+    #         # Select a slice of 3D matrix; size = 2431675x66
+    #         matrix2d = matrix3d[:,:,tfs_idx[tf]].todense().astype("float")
+    #         # ReMap AND UniBind bound and open regions (4) = 1
+    #         # Open regions (1) = 0
+    #         # Remaining regions (0, 2, 3) = None
+    #         matrix2d[matrix2d == 0] = np.nan
+    #         matrix2d[matrix2d == 1] = 0
+    #         matrix2d[matrix2d == 2] = np.nan
+    #         matrix2d[matrix2d == 3] = np.nan
+    #         matrix2d[matrix2d == 4] = 1
+    #         np.savez_compressed(matrix2d_file, matrix2d)
+
+    # # For each sample...
+    # for s in sorted(samples_idx, key=lambda x: samples_idx[x]):
+
+    #     # Initialize
+    #     biosample_name = s.replace(" ", "_").replace("/", "-")
+
+    #     # Skip if file already exists
+    #     matrix2d_file = os.path.join(out_dir, "matrix2d.%s.ReMap.sparse.npz" % biosample_name)
+    #     if not os.path.exists(matrix2d_file):
+    #         # Select a slice of 3D matrix; size = 2431675x174
+    #         matrix2d = matrix3d[samples_idx[s],:,:].todense().astype("float")
+    #         # ReMap bound and open regions (2 and 4) = 1
+    #         # Open regions (1) = 0
+    #         # Remaining regions (0) and UniBind-only bound and open regions (3) = None
+    #         matrix2d[matrix2d == 0] = np.nan
+    #         matrix2d[matrix2d == 1] = 0
+    #         matrix2d[matrix2d == 2] = 1
+    #         matrix2d[matrix2d == 3] = np.nan
+    #         matrix2d[matrix2d == 4] = 1
+    #         np.savez_compressed(matrix2d_file, matrix2d)
+
+    #     # Skip if file already exists
+    #     matrix2d_file = os.path.join(out_dir, "matrix2d.%s.UniBind.sparse.npz" % biosample_name)
+    #     if not os.path.exists(matrix2d_file):
+    #         # Select a slice of 3D matrix; size = 2431675x174
+    #         matrix2d = matrix3d[samples_idx[s],:,:].todense().astype("float")
+    #         # UniBind bound and open regions (3 and 4) = 1
+    #         # Open regions (1) = 0
+    #         # Remaining regions (0) and ReMap-only bound and open regions (2) = None
+    #         matrix2d[matrix2d == 0] = np.nan
+    #         matrix2d[matrix2d == 1] = 0
+    #         matrix2d[matrix2d == 2] = np.nan
+    #         matrix2d[matrix2d == 3] = 1
+    #         matrix2d[matrix2d == 4] = 1
+    #         np.savez_compressed(matrix2d_file, matrix2d)
+
+    #     # Skip if file already exists
+    #     matrix2d_file = os.path.join(out_dir, "matrix2d.%s.ReMap+UniBind.sparse.npz" % biosample_name)
+    #     if not os.path.exists(matrix2d_file):
+    #         # Select a slice of 3D matrix; size = 2431675x174
+    #         matrix2d = matrix3d[samples_idx[s],:,:].todense().astype("float")
+    #         # ReMap AND UniBind bound and open regions (4) = 1
+    #         # Open regions (1) = 0
+    #         # Remaining regions (0, 2, 3) = None
+    #         matrix2d[matrix2d == 0] = np.nan
+    #         matrix2d[matrix2d == 1] = 0
+    #         matrix2d[matrix2d == 2] = np.nan
+    #         matrix2d[matrix2d == 3] = np.nan
+    #         matrix2d[matrix2d == 4] = 1
+    #         np.savez_compressed(matrix2d_file, matrix2d)
+
+    #######################################################
+    # Create FASTA files of sequence length 200-1000bp.   #
+    #######################################################
+
+    # Initialize
+    minlen = 200
+    maxlen = 1000
+    step = 100
+
+    # For each sequence length...
+    for l in range(minlen, maxlen + step, step):
+
+        # Initialize
+        chroms = set()
+        n = int((l - bp) / 2) # increase n base pairs in each direction
 
         # Skip if BED file does not exist
         bed_file = os.path.join(out_dir, ".regions.bed")
         if not os.path.exists(bed_file):
-        
+
             for i in sorted(regions_idx, key=lambda x: regions_idx[x]):
-                string = "%s\t%s\t%s\t%s" % (i[0], i[1], i[2], regions_idx[i])
+                string = "%s\t%s\t%s\t%s" % (
+                    i[0], i[1] - n, i[2] + n, regions_idx[i]
+                )
                 ParseUtils.write(bed_file, string)
+                chroms.add(i[0])
 
-        # Get BED and FASTA files
+        # Get BED file
         a = BedTool(bed_file)
-        s =  a.sequence(fi=fasta_file, name=True)
 
-        # Write
-        with gzip.open(sequences_file, "wb") as f:
-            f.write(open(s.seqfn).read().encode())
+        for chrom in sorted(chroms):
+
+            # Skip if file already exists
+            sequences_file = os.path.join(
+                out_dir, "sequences.%sbp.%s.fa.gz" % (l, chrom)
+            )
+            if not os.path.exists(sequences_file):
+
+                # Get chromosome FASTA file
+                c = a.filter(lambda x: x.chrom == chrom)
+                c = c.sequence(fi=fasta_file, name=True)
+
+                # Write
+                with gzip.open(sequences_file, "wb") as f:
+                    f.write(open(c.seqfn).read().encode())
 
         # Remove
         os.remove(bed_file)
+
+        break
 
 #-------------#
 # Main        #

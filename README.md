@@ -1,12 +1,12 @@
-# Transcription factor binding matrix
-A sparse 3D matrix of 2,503,732 bound and open regions across 175 transcription factors and 70 cells/tissues
+# TF binding matrix
+A sparse 3D matrix of 1,817,918 bound and open regions across 163 transcription factors and 52 cell and tissue types
 
 ```
 git clone https://github.com/wassermanlab/TF-Binding-Matrix.git
 ```
 
 ## News
-01/09/2019 We have improved the profile inference tool by implementing our own [similarity regression](https://www.nature.com/articles/s41588-019-0411-1) method.
+01/06/2020 Using recent data from [ENCODE](https://www.encodeproject.org/files/ENCFF503GCK/), we have expanded the matrix; it now covers 2,503,732 bound/open regions across 175 TFs and 70 cells/tissues
 
 ## Content
 * The `examples` folder contains the sequences of two transcription factors (TFs) and one protein that is not a transcription factor, such as the human serine/threonine-protein kinase [mTOR](https://www.uniprot.org/uniprot/P42345)
@@ -34,28 +34,33 @@ conda create -c bioconda -c conda-forge python=3.7 biopython coreutils pandas \
 
 ## Steps
 The following steps were followed to generate the TF binding matrices for the transfer learning manuscript.
-### 1. Data download
+### 1. Data
 #### 1.1 DNase I hypersensitive sites
+Download clustered DHS data in 95 cell and tissue types from the [ENCODE DHS peak clusters at the UCSC Genome Browser](https://genome.ucsc.edu/cgi-bin/hgTrackUi?db=hg38&g=wgEncodeRegDnase). Then, extract the center of each cluster and expand it 100 bp in each direction using bedtools slop for a final length of 200 bp. In addition, download information about the names of the clustered cells and tissues and their correspondance with the different cluster IDs.
 ```
 cd ./DHS/UCSC/
 ./get_dhs.sh
 ```
 #### 1.2 ENCODE accessibility and TF binding
+Download all human DNase-seq and TF ChIP-seq data from [ENCODE](https://www.encodeproject.org/matrix/?type=Experiment&status=released&perturbed=false&replicates.library.biosample.donor.organism.scientific_name=Homo+sapiens&assembly=GRCh38&assay_title=TF+ChIP-seq&assay_title=DNase-seq). Then, resize all the DNase-seq data using bedtools slop for a final length of 150 bp and store it in a single file. Finally, store all the ChIP-seq data for each TF in a separate file.
 ```
 cd ./ENCODE/
 ./get_encode.sh
 ```
 #### 1.3 Hg38 genome sequence
+Download the FASTA sequence of the build 38 of the Genome Reference Consortium human genome (*i.e.* [hg38](https://www.ncbi.nlm.nih.gov/assembly/GCF_000001405.26/)). Discard any non-standard chromosomes.
 ```
 cd ./Genomes/hg38/
 ./get_hg38.sh
 ```
 #### 1.4 ReMap TF binding
+Download all human TF ChIP-seq peaks from [ReMap 2018](http://remap.univ-amu.fr/download_page#remap2018tab). Then, extract the peak summits and the sample names given to the different ENCODE experiments (*i.e.* files whose name starts with _ENCSR_).
 ```
 cd ./ReMap/
 ./get_remap.sh
 ```
 #### 1.5 UniBind TFBSs
+Download all human PWM-based TFBS predictions from [UniBind](https://unibind.uio.no/downloads/). Then, collapse all TFBSs into a single file, and extract the names of the different TFs as well as the sample names given to the different ENCODE experiments (*i.e.* files whose name starts with _ENCSR_).
 ```
 cd ./UniBind/
 ./get_unibind.sh 
