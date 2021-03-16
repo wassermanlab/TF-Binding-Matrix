@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 # From https://genome.ucsc.edu/cgi-bin/hgTrackUi?db=hg38&g=wgEncodeRegDnase
@@ -33,7 +33,7 @@ fi
 # L = 200-1000 bp
 # Increase in steps of 100 bp
 # for L in 200 300 400 500 600 700 800 900 1000
-for L in 200
+for L in 200 500 1000
 do
     # Extend summits L/2 bp in each direction
     if [ ! -f DHS.${L}bp.bed ]; then
