@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Get ReMap 2018 peaks 
 REMAP="remap2018_all_macs2_hg38_v1_2.bed.gz"

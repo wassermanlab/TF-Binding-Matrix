@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Get UniBind TFBSs for prediction model PWM and peak-caller MACS
 UNIBIND="pwm_tfbs.tar.gz"
