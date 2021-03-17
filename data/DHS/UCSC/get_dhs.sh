@@ -33,7 +33,7 @@ fi
 # L = 200-1000 bp
 # Increase in steps of 100 bp
 # for L in 200 300 400 500 600 700 800 900 1000
-for L in 200 500 1000
+for L in 200
 do
     # Extend summits L/2 bp in each direction
     if [ ! -f DHS.${L}bp.bed ]; then
