@@ -15,7 +15,7 @@ import subprocess as sp
 from __init__ import ENCODE, ParseUtils
 
 usage_msg = """
-usage: %s --dhs-dir DIR --fasta-file FILE --encode-dir DIR
+usage: %s --dhs-file FILE --encode-dir DIR --fasta-file FILE
           --remap-dir DIR --unibind-dir DIR [-h] [options]
 """ % os.path.basename(__file__)
 
