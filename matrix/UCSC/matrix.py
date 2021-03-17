@@ -15,7 +15,7 @@ import subprocess as sp
 from __init__ import ENCODE, ParseUtils
 
 usage_msg = """
-usage: %s --dhs-dir DIR --fasta-file FILE --encode-dir DIR
+usage: %s --dhs-file FILE --encode-dir DIR --fasta-file FILE
           --remap-dir DIR --unibind-dir DIR [-h] [options]
 """ % os.path.basename(__file__)
 
@@ -764,16 +764,11 @@ def build_matrix(dhs_file, encode_dir, fasta_file, remap_dir, unibind_dir,
     #         np.savez_compressed(matrix2d_file, matrix2d)
 
     #######################################################
-    # Create FASTA files of sequence length 200-1000bp.   #
+    # Create FASTA files of length 200, 500 and 1000bp.   #
     #######################################################
 
-    # Initialize
-    minlen = 200
-    maxlen = 1000
-    step = 100
-
     # For each sequence length...
-    for l in range(minlen, maxlen + step, step):
+    for l in [200, 500, 1000]:
 
         # Initialize
         chroms = set()
@@ -811,8 +806,6 @@ def build_matrix(dhs_file, encode_dir, fasta_file, remap_dir, unibind_dir,
 
         # Remove
         os.remove(bed_file)
-
-        break
 
 #-------------#
 # Main        #
