@@ -520,8 +520,39 @@ def build_matrix(dhs_file, encode_dir, fasta_file, remap_dir, unibind_dir,
         matrix3d = sparse.load_npz(matrix_file)
 
     #######################################################
-    # Build matrices for transfer learning.               #
+    # Build matrices for transfer learning and CAMs.      #
     #######################################################
+
+    # Skip if file already exists
+    matrix2d_file = os.path.join(out_dir, "matrix2d.ReMap.sparse.npz")
+    if not os.path.exists(matrix2d_file):
+
+        # Collapse into a 1817918x163 matrix
+        matrix2d = matrix3d.reduce(np.maximum, axis=0).todense().astype("float")
+        # ReMap bound and open regions (2, 4) = 1
+        # Open regions (1), UniBind-only bound and open regions (3) = 0
+        # Remaining regions (0) = None
+        matrix2d[matrix2d == 0] = np.nan
+        matrix2d[matrix2d == 1] = 0
+        matrix2d[matrix2d == 2] = 1
+        matrix2d[matrix2d == 3] = 0
+        matrix2d[matrix2d == 4] = 1
+        np.savez_compressed(matrix2d_file, matrix2d)
+
+    # Skip if file already exists
+    matrix2d_file = os.path.join(out_dir, "matrix2d.ReMap.full.npz")
+    if not os.path.exists(matrix2d_file):
+
+        # Collapse into a 1817918x163 matrix
+        matrix2d = matrix3d.reduce(np.maximum, axis=0).todense().astype("float")
+        # ReMap bound and open regions (2, 4) = 1
+        # Remaining regions (0, 1, 3) = 0
+        matrix2d[matrix2d == 0] = 0
+        matrix2d[matrix2d == 1] = 0
+        matrix2d[matrix2d == 2] = 1
+        matrix2d[matrix2d == 3] = 0
+        matrix2d[matrix2d == 4] = 1
+        np.savez_compressed(matrix2d_file, matrix2d)
 
     # Skip if file already exists
     matrix2d_file = os.path.join(
@@ -554,6 +585,22 @@ def build_matrix(dhs_file, encode_dir, fasta_file, remap_dir, unibind_dir,
         matrix2d[matrix2d == 1] = 0
         matrix2d[matrix2d == 2] = np.nan
         matrix2d[matrix2d == 3] = np.nan
+        matrix2d[matrix2d == 4] = 1
+        np.savez_compressed(matrix2d_file, matrix2d)
+
+    # Skip if file already exists
+    matrix2d_file = os.path.join(out_dir, "matrix2d.ReMap+UniBind.full.npz")
+    if not os.path.exists(matrix2d_file):
+
+        # Collapse into a 1817918x163 matrix
+        matrix2d = matrix3d.reduce(np.maximum, axis=0).todense().astype("float")
+        # ReMap AND UniBind bound and open regions (4) = 1
+        # Open regions (1) = 0
+        # Remaining regions (0, 2, 3) = None
+        matrix2d[matrix2d == 0] = 0
+        matrix2d[matrix2d == 1] = 0
+        matrix2d[matrix2d == 2] = 0
+        matrix2d[matrix2d == 3] = 0
         matrix2d[matrix2d == 4] = 1
         np.savez_compressed(matrix2d_file, matrix2d)
 
